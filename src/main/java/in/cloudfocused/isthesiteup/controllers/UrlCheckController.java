@@ -12,7 +12,7 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 public class UrlCheckController {
     private final String IS_SITE_UP = "Site is up!";
-    private final String IS_SITE_DOWN = "Site is down!";
+    private final String IS_SITE_DOWN = "Site is down. Please try later!";
     private final String INCORRECT_URL = "URL is incorrect!";
 
     @GetMapping("/check")
@@ -23,10 +23,14 @@ public class UrlCheckController {
             HttpURLConnection conn = (HttpURLConnection) urlobj.openConnection();
             conn.setRequestMethod("GET");
             conn.connect();
-            if (conn.getResponseCode() /100 != 2) {
+            int responseCodeCatagory = conn.getResponseCode() / 100;
+            System.out.println(responseCodeCatagory);
+
+            if (responseCodeCatagory != 2 && responseCodeCatagory != 3) {
+                System.out.println("Inside If loop");
                 returnMessage = IS_SITE_DOWN;
-            }
-            else {
+            } else {
+                System.out.println("Inside else loop");
                 returnMessage = IS_SITE_UP;
             }
         } catch (MalformedURLException e) {
@@ -35,7 +39,6 @@ public class UrlCheckController {
             returnMessage = IS_SITE_DOWN;
         }
         
-
         return returnMessage;
     }
 }
